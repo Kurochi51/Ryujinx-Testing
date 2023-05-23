@@ -42,6 +42,7 @@ namespace Ryujinx.Modules
 
         // On Windows, GtkSharp.Dependencies adds these extra dirs that must be cleaned during updates.
         private static readonly string[] WindowsDependencyDirs = new string[] { "bin", "etc", "lib", "share" };
+        // This is a list of loose files in base dir
         private static readonly string[] OldFiles = new string[] { "alsoft.ini", "avcodec-59.dll", "avutil-57.dll", "clrcompression.dll", "glfw3.dll", "libarmeilleure-jitsupport.dylib", "libsoundio.dll", "LICENSE.txt", "OpenAL32.dll", "Ryujinx.exe", "Ryujinx.SDL2.Common.dll.config", "SDL2.dll", "THIRDPARTY.md" };
 
         private static HttpClient ConstructHttpClient()
@@ -469,7 +470,7 @@ namespace Ryujinx.Modules
             updateDialog.ProgressBar.Value    = 0;
             updateDialog.ProgressBar.MaxValue = allFiles.Count;
 
-            // Get amount of files in HomeDir
+            // Get amount of files in base dir
             //int OldFileNumber = OldFiles.Length;
 
             // Replace old files
@@ -477,7 +478,7 @@ namespace Ryujinx.Modules
             {
                 foreach (string file in allFiles)
                 {
-                    //Check if file shows up in pre-defined list of HomeDir files
+                    //Check if file shows up in pre-defined list of base dir files
                     int count = 0;
                     foreach (string old in OldFiles)
                     {
