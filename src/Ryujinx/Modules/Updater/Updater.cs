@@ -42,6 +42,7 @@ namespace Ryujinx.Modules
 
         // On Windows, GtkSharp.Dependencies adds these extra dirs that must be cleaned during updates.
         private static readonly string[] WindowsDependencyDirs = new string[] { "bin", "etc", "lib", "share" };
+        private static string[] OldFiles = new string[] { "alsoft.ini", "avcodec-59.dll", "avutil-57.dll", "clrcompression.dll", "glfw3.dll", "libarmeilleure-jitsupport.dylib", "libsoundio.dll", "LICENSE.txt", "OpenAL32.dll", "Ryujinx.exe", "Ryujinx.SDL2.Common.dll.config", "SDL2.dll", "THIRDPARTY.md" };
 
         private static HttpClient ConstructHttpClient()
         {
@@ -473,20 +474,26 @@ namespace Ryujinx.Modules
             {
                 foreach (string file in allFiles)
                 {
-                    if (file.Contains("ReShade", StringComparison.OrdinalIgnoreCase) || file.Contains("opengl32", StringComparison.OrdinalIgnoreCase))
-                        break;
-                    try
+                    foreach (string old in OldFiles)
                     {
-                        File.Move(file, file + ".ryuold");
-
-                        Application.Invoke(delegate
+                        if (!file.Equals(old))
                         {
-                            updateDialog.ProgressBar.Value++;
-                        });
-                    }
-                    catch
-                    {
-                        Logger.Warning?.Print(LogClass.Application, "Updater was unable to rename file: " + file);
+                            try
+                            {
+                                {
+                                    File.Move(file, file + ".ryuold");
+
+                                    Application.Invoke(delegate
+                                    {
+                                        updateDialog.ProgressBar.Value++;
+                                    });
+                                }
+                            }
+                            catch
+                            {
+                                Logger.Warning?.Print(LogClass.Application, "Updater was unable to rename file: " + file);
+                            }
+                        }
                     }
                 }
 
