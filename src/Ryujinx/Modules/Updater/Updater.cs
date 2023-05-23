@@ -471,49 +471,52 @@ namespace Ryujinx.Modules
             updateDialog.ProgressBar.MaxValue = allFiles.Count;
 
             // Get amount of files in base dir
-            //int OldFileNumber = OldFiles.Length;
+            int OldFileNumber = OldFiles.Length;
 
             // Replace old files
             await Task.Run(() =>
             {
-                var files = Directory.EnumerateFiles(HomeDir);
-                Console.WriteLine("Base dir files: " + files);
-                int OldFileNumber = files.Count();
-                Console.WriteLine("Number of base dir files: " + OldFileNumber);
+                var dirFiles = Directory.EnumerateFiles(HomeDir);
+                Console.WriteLine("Base dir files: " + dirFiles);
+                Console.WriteLine("Number of base dir files: " + dirFiles.Count());
+                List<string> UserFiles= new List<string>();
+                foreach (string uFile in dirFiles)
+                {
+                    foreach (string oldFile in OldFiles)
+                    {
+                        if(!uFile.Equals(oldFile))
+                        {
+                            UserFiles.ToList().Add(uFile);
+                        }
+                    }
+                }
+                Console.WriteLine("User files in base dir: "+ UserFiles);
                 foreach (string file in allFiles)
                 {
                     //Check if file shows up in pre-defined list of base dir files
-                    int fileCount = 1;
                     string fileCheck=file;
-                    foreach (string oldFile in files)
+                    foreach (string uFile in UserFiles)
                     {
-                        if (!fileCheck.Equals(oldFile))
+                        if (!fileCheck.Equals(uFile))
                         {
-                            fileCount++;
-                        }
-                    }
-                    // If one match exists, treat as normal, otherwise a fallback might be necessarry
-                    if (fileCount != OldFileNumber)
-                    {
-                        try
-                        {
+                            try
                             {
-                                File.Move(file, file + ".ryuold");
+                                {
+                                    File.Move(file, file + ".ryuold");
+                                    Application.Invoke(delegate
+                                    {
+                                        updateDialog.ProgressBar.Value++;
+                                    });
+                                }
+                            }
+                            catch
+                            {
+                                Logger.Warning?.Print(LogClass.Application, "Updater was unable to rename file: " + file);
                             }
                         }
-                        catch
-                        {
-                            Logger.Warning?.Print(LogClass.Application, "Updater was unable to rename file: " + file);
-                        }
+                        else
+                            Console.WriteLine("User file in base dir: " + uFile);
                     }
-                    else
-                    {
-                        Console.WriteLine(file + " is a base dir file");
-                    }
-                    Application.Invoke(delegate
-                    {
-                        updateDialog.ProgressBar.Value++;
-                    });
                 }
 
                 Application.Invoke(delegate
