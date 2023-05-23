@@ -476,9 +476,9 @@ namespace Ryujinx.Modules
             // Replace old files
             await Task.Run(() =>
             {
-                Console.WriteLine("HomeDir: " + HomeDir);
+                //Console.WriteLine("HomeDir: " + HomeDir);
                 // Find all files in base directory and store unknown files into a new list
-                var dirFiles = Directory.GetFiles(HomeDir);
+                var dirFiles = Directory.GetFiles(HomeDir,"*.*",SearchOption.TopDirectoryOnly);
                 List<string> UserFiles = new List<string>();
                 foreach (var dFile in dirFiles)
                 {
@@ -486,16 +486,16 @@ namespace Ryujinx.Modules
                     foreach (string oldFile in OldFiles)
                     {
                         //Console.WriteLine(oldFile + " being checked right now against " + Path.GetFileName(uFile));
-                        if (Path.GetFileName(dFile).Equals(oldFile))
+                        if (!Path.GetFileName(dFile).Equals(oldFile))
                         {
-                            Console.WriteLine(Path.GetFileName(dFile) + " is a default ryujinx file.");
-                        }
-                        else
                             UserFiles.Add(Path.GetFileName(dFile));
+                        }
+                        //else
+                            //Console.WriteLine(Path.GetFileName(dFile) + " is a default ryujinx file.");
                     }
                 }
                 //Console.WriteLine("Number of base dir files: " + dirFiles);
-                Console.WriteLine("User files in base dir: " + UserFiles.Count());
+                //Console.WriteLine("User files in base dir: " + UserFiles.Count());
                 foreach (string file in allFiles)
                 {
                     //Check if file is a user file, and ignore if true
@@ -506,7 +506,7 @@ namespace Ryujinx.Modules
                             try
                             {
                                 {
-                                    Console.WriteLine(file + " was checked against "+ uFile);
+                                    //Console.WriteLine(file + " was checked against "+ uFile);
                                     File.Move(file, file + ".ryuold");
                                     Application.Invoke(delegate
                                     {
@@ -519,8 +519,8 @@ namespace Ryujinx.Modules
                                 Logger.Warning?.Print(LogClass.Application, "Updater was unable to rename file: " + file);
                             }
                         }
-                        else
-                            Console.WriteLine("User file in base dir: " + uFile);
+                        //else
+                            //Console.WriteLine("User file in base dir: " + uFile);
                     }
                 }
 
@@ -568,7 +568,7 @@ namespace Ryujinx.Modules
                 return false;
             }
 
-            /*if (Program.Version.Contains("dirty") || !ReleaseInformation.IsValid())
+            if (Program.Version.Contains("dirty") || !ReleaseInformation.IsValid())
             {
                 if (showWarnings)
                 {
@@ -576,7 +576,7 @@ namespace Ryujinx.Modules
                 }
 
                 return false;
-            }*/
+            }
 
             return true;
 #else
