@@ -479,17 +479,17 @@ namespace Ryujinx.Modules
                 foreach (string file in allFiles)
                 {
                     //Check if file shows up in pre-defined list of base dir files
-                    int count = 0;
-                    string fileCheck=file.ToString();
+                    int fileCount = 0;
+                    string fileCheck=file;
                     foreach (string old in OldFiles)
                     {
                         if (fileCheck.Equals(old))
                         {
-                            count++;
+                            fileCount++;
                         }
                     }
                     // If one match exists, treat as normal, otherwise a fallback might be necessarry
-                    if (count == 1)
+                    if (fileCount == 1)
                     {
                         try
                         {
@@ -507,6 +507,8 @@ namespace Ryujinx.Modules
                             Logger.Warning?.Print(LogClass.Application, "Updater was unable to rename file: " + file);
                         }
                     }
+                    else
+                        GtkDialog.CreateWarningDialog("yes", "fileCount invalid: " + fileCount);
                 }
 
                 Application.Invoke(delegate
