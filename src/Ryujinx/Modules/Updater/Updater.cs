@@ -477,6 +477,7 @@ namespace Ryujinx.Modules
             await Task.Run(() =>
             {
                 var files = Directory.EnumerateFiles(HomeDir);
+                Console.WriteLine("Base dir files: " + files);
                 int OldFileNumber = files.Count();
                 Console.WriteLine("Number of base dir files: " + OldFileNumber);
                 foreach (string file in allFiles)
@@ -486,7 +487,6 @@ namespace Ryujinx.Modules
                     string fileCheck=file;
                     foreach (string oldFile in files)
                     {
-                        Console.WriteLine(oldFile + " is a base dir file");
                         if (!fileCheck.Equals(oldFile))
                         {
                             fileCount++;
@@ -499,10 +499,6 @@ namespace Ryujinx.Modules
                         {
                             {
                                 File.Move(file, file + ".ryuold");
-                                Application.Invoke(delegate
-                                {
-                                    updateDialog.ProgressBar.Value++;
-                                });
                             }
                         }
                         catch
@@ -510,6 +506,14 @@ namespace Ryujinx.Modules
                             Logger.Warning?.Print(LogClass.Application, "Updater was unable to rename file: " + file);
                         }
                     }
+                    else
+                    {
+                        Console.WriteLine(file + " is a base dir file");
+                    }
+                    Application.Invoke(delegate
+                    {
+                        updateDialog.ProgressBar.Value++;
+                    });
                 }
 
                 Application.Invoke(delegate
