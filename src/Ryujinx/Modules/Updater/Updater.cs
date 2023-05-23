@@ -480,9 +480,10 @@ namespace Ryujinx.Modules
                 {
                     //Check if file shows up in pre-defined list of base dir files
                     int count = 0;
+                    string fileCheck=file;
                     foreach (string old in OldFiles)
                     {
-                        if (file.Equals(old))
+                        if (fileCheck.Equals(old))
                         {
                             count++;
                         }
