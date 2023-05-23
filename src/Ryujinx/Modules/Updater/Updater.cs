@@ -476,9 +476,9 @@ namespace Ryujinx.Modules
             // Replace old files
             await Task.Run(() =>
             {
-                var dirFiles = Directory.EnumerateFiles(HomeDir);
+                var dirFiles = Directory.GetFiles(HomeDir);
                 Console.WriteLine("Base dir files: " + dirFiles);
-                Console.WriteLine("Number of base dir files: " + dirFiles.Count());
+                Console.WriteLine("Number of base dir files: " + dirFiles.Length);
                 List<string> UserFiles= new List<string>();
                 foreach (string uFile in dirFiles)
                 {
