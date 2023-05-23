@@ -45,6 +45,7 @@ namespace Ryujinx.Modules
         // This is a list of loose files in base dir
         private static readonly string[] OldFiles = new string[] { "alsoft.ini", "avcodec-59.dll", "avutil-57.dll", "clrcompression.dll", "glfw3.dll", "libarmeilleure-jitsupport.dylib", "libsoundio.dll", "LICENSE.txt", "OpenAL32.dll", "Ryujinx.exe", "Ryujinx.SDL2.Common.dll.config", "SDL2.dll", "THIRDPARTY.md" };
 
+
         private static HttpClient ConstructHttpClient()
         {
             HttpClient result = new HttpClient();
@@ -476,32 +477,35 @@ namespace Ryujinx.Modules
             // Replace old files
             await Task.Run(() =>
             {
+                Console.WriteLine("HomeDir: " + HomeDir);
                 var dirFiles = Directory.GetFiles(HomeDir);
-                Console.WriteLine("Base dir files: " + dirFiles);
-                Console.WriteLine("Number of base dir files: " + dirFiles.Length);
-                List<string> UserFiles= new List<string>();
-                foreach (string uFile in dirFiles)
+                List<string> UserFiles = new List<string>();
+                foreach (var dFile in dirFiles)
                 {
+                    //Console.WriteLine("Base dir files: " + Path.GetFileName(uFile));
                     foreach (string oldFile in OldFiles)
                     {
-                        if(!uFile.Equals(oldFile))
+                        //Console.WriteLine(oldFile + " being checked right now against " + Path.GetFileName(uFile));
+                        if (Path.GetFileName(dFile).Equals(oldFile))
                         {
-                            UserFiles.ToList().Add(uFile);
+                            Console.WriteLine(Path.GetFileName(dFile) + " is a default ryujinx file.");
+                            UserFiles.Add(Path.GetFileName(dFile));
                         }
                     }
                 }
-                Console.WriteLine("User files in base dir: "+ UserFiles);
+                //Console.WriteLine("Number of base dir files: " + dirFiles);
+                Console.WriteLine("User files in base dir: " + UserFiles.Count());
                 foreach (string file in allFiles)
                 {
                     //Check if file shows up in pre-defined list of base dir files
-                    string fileCheck=file;
                     foreach (string uFile in UserFiles)
                     {
-                        if (!fileCheck.Equals(uFile))
+                        if (!file.Equals(uFile))
                         {
                             try
                             {
                                 {
+                                    Console.WriteLine(file + " was checked against "+ uFile);
                                     File.Move(file, file + ".ryuold");
                                     Application.Invoke(delegate
                                     {
@@ -563,7 +567,7 @@ namespace Ryujinx.Modules
                 return false;
             }
 
-            if (Program.Version.Contains("dirty") || !ReleaseInformation.IsValid())
+            /*if (Program.Version.Contains("dirty") || !ReleaseInformation.IsValid())
             {
                 if (showWarnings)
                 {
@@ -571,7 +575,7 @@ namespace Ryujinx.Modules
                 }
 
                 return false;
-            }
+            }*/
 
             return true;
 #else
