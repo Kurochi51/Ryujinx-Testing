@@ -42,9 +42,8 @@ namespace Ryujinx.Modules
 
         // On Windows, GtkSharp.Dependencies adds these extra dirs that must be cleaned during updates.
         private static readonly string[] WindowsDependencyDirs = new string[] { "bin", "etc", "lib", "share" };
-        // This is a list of loose files in base dir
+        // This is a list of loose files shipped with release in base dir
         private static readonly string[] OldFiles = new string[] { "alsoft.ini", "avcodec-59.dll", "avutil-57.dll", "clrcompression.dll", "glfw3.dll", "libarmeilleure-jitsupport.dylib", "libsoundio.dll", "LICENSE.txt", "OpenAL32.dll", "Ryujinx.exe", "Ryujinx.SDL2.Common.dll.config", "SDL2.dll", "THIRDPARTY.md" };
-
 
         private static HttpClient ConstructHttpClient()
         {
@@ -472,12 +471,13 @@ namespace Ryujinx.Modules
             updateDialog.ProgressBar.MaxValue = allFiles.Count;
 
             // Get amount of files in base dir
-            int OldFileNumber = OldFiles.Length;
+            // int OldFileNumber = OldFiles.Length;
 
             // Replace old files
             await Task.Run(() =>
             {
                 Console.WriteLine("HomeDir: " + HomeDir);
+                // Find all files in base directory and store unknown files into a new list
                 var dirFiles = Directory.GetFiles(HomeDir);
                 List<string> UserFiles = new List<string>();
                 foreach (var dFile in dirFiles)
@@ -489,15 +489,16 @@ namespace Ryujinx.Modules
                         if (Path.GetFileName(dFile).Equals(oldFile))
                         {
                             Console.WriteLine(Path.GetFileName(dFile) + " is a default ryujinx file.");
-                            UserFiles.Add(Path.GetFileName(dFile));
                         }
+                        else
+                            UserFiles.Add(Path.GetFileName(dFile));
                     }
                 }
                 //Console.WriteLine("Number of base dir files: " + dirFiles);
                 Console.WriteLine("User files in base dir: " + UserFiles.Count());
                 foreach (string file in allFiles)
                 {
-                    //Check if file shows up in pre-defined list of base dir files
+                    //Check if file is a user file, and ignore if true
                     foreach (string uFile in UserFiles)
                     {
                         if (!file.Equals(uFile))
