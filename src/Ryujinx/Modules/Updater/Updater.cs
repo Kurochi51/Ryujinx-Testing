@@ -471,19 +471,23 @@ namespace Ryujinx.Modules
             updateDialog.ProgressBar.MaxValue = allFiles.Count;
 
             // Get amount of files in base dir
-            int OldFileNumber = OldFiles.Length;
+            //int OldFileNumber = OldFiles.Length;
 
             // Replace old files
             await Task.Run(() =>
             {
+                var files = Directory.EnumerateFiles(HomeDir);
+                int OldFileNumber = files.Count();
+                Console.WriteLine("Number of base dir files: " + OldFileNumber);
                 foreach (string file in allFiles)
                 {
                     //Check if file shows up in pre-defined list of base dir files
                     int fileCount = 1;
                     string fileCheck=file;
-                    foreach (string old in OldFiles)
+                    foreach (string oldFile in files)
                     {
-                        if (!fileCheck.Equals(old))
+                        Console.WriteLine(oldFile + " is a base dir file");
+                        if (!fileCheck.Equals(oldFile))
                         {
                             fileCount++;
                         }
@@ -495,6 +499,10 @@ namespace Ryujinx.Modules
                         {
                             {
                                 File.Move(file, file + ".ryuold");
+                                Application.Invoke(delegate
+                                {
+                                    updateDialog.ProgressBar.Value++;
+                                });
                             }
                         }
                         catch
@@ -502,10 +510,6 @@ namespace Ryujinx.Modules
                             Logger.Warning?.Print(LogClass.Application, "Updater was unable to rename file: " + file);
                         }
                     }
-                    Application.Invoke(delegate
-                    {
-                        updateDialog.ProgressBar.Value++;
-                    });
                 }
 
                 Application.Invoke(delegate
