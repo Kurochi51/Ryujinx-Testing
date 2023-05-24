@@ -509,7 +509,6 @@ namespace Ryujinx.Modules
             });
 
             Directory.Delete(UpdateDir, true);
-            await Task.Run(CleanupUpdate);
 
             updateDialog.MainText.Text      = "Update Complete!";
             updateDialog.SecondaryText.Text = "Do you want to restart Ryujinx now?";
