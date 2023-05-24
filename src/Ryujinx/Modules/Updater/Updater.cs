@@ -594,7 +594,7 @@ namespace Ryujinx.Modules
             var files = Directory.EnumerateFiles(HomeDir); // All files directly in base dir.
             foreach(var uFiles in UserFiles)
             {
-                //files = files.Where(u => !u.Contains(uFiles)).ToList();
+                files = files.Where(u => !u.Contains(uFiles)).ToList();
                 Console.WriteLine(uFiles + " was removed from paths.");
             }
             //Change allFiles list to exclude user files
