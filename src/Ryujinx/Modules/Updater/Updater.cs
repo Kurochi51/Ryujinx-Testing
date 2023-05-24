@@ -42,8 +42,6 @@ namespace Ryujinx.Modules
 
         // On Windows, GtkSharp.Dependencies adds these extra dirs that must be cleaned during updates.
         private static readonly string[] WindowsDependencyDirs = new string[] { "bin", "etc", "lib", "share" };
-        // This is a list of loose files shipped with release in base dir
-        //private static readonly string[] OldFiles = new string[] { "alsoft.ini", "avcodec-59.dll", "avutil-57.dll", "clrcompression.dll", "glfw3.dll", "libarmeilleure-jitsupport.dylib", "libsoundio.dll", "LICENSE.txt", "OpenAL32.dll", "Ryujinx.exe", "Ryujinx.SDL2.Common.dll.config", "SDL2.dll", "THIRDPARTY.md" };
 
         private static HttpClient ConstructHttpClient()
         {
@@ -466,14 +464,6 @@ namespace Ryujinx.Modules
 
             List<string> allFiles = EnumerateFilesToDelete().ToList();
 
-            /*var oldFiles = Directory.EnumerateFiles(UpdatePublishDir, "*", SearchOption.TopDirectoryOnly);
-            List<string> OldFiles = new List<string>();
-            foreach (string oFile in oldFiles)
-            {
-                allFiles.Add(oFile);
-                //OldFiles.Add(Path.GetFileName(oFile));
-            }*/
-
             updateDialog.MainText.Text        = "Renaming Old Files...";
             updateDialog.ProgressBar.Value    = 0;
             updateDialog.ProgressBar.MaxValue = allFiles.Count;
@@ -575,6 +565,7 @@ namespace Ryujinx.Modules
         {
             var files = Directory.EnumerateFiles(HomeDir); // All files directly in base dir.
 
+            // Determine and exclude user files only when the updater is running, not when cleaning old files
             if (Running)
             {
                 //Get loose files in base directory and store them in a list
@@ -596,13 +587,11 @@ namespace Ryujinx.Modules
                 //Compare the loose files in base directory against the loose files from the incoming update, and store foreign ones in a user list
                 List<string> UserFiles = DirFiles.Except(OldFiles).ToList();
 
+                //Remove user files from the paths in files
                 foreach (var uFiles in UserFiles)
                 {
                     files = files.Where(u => !u.Contains(uFiles)).ToList();
-                    //Console.WriteLine(uFiles + " was removed from paths.");
                 }
-                //Change allFiles list to exclude user files
-                //allFiles = DirFiles.Except(UserFiles).ToList();*/
             }
             if (OperatingSystem.IsWindows())
             {
