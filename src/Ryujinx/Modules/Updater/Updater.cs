@@ -465,6 +465,13 @@ namespace Ryujinx.Modules
             File.Delete(updateFile);
 
             List<string> allFiles = EnumerateFilesToDelete().ToList();
+            /*var oldFiles = Directory.EnumerateFiles(UpdatePublishDir, "*", SearchOption.TopDirectoryOnly);
+            List<string> OldFiles = new List<string>();
+            foreach (string oFile in oldFiles)
+            {
+                allFiles.Add(oFile);
+                //OldFiles.Add(Path.GetFileName(oFile));
+            }*/
 
             updateDialog.MainText.Text        = "Renaming Old Files...";
             updateDialog.ProgressBar.Value    = 0;
@@ -587,7 +594,8 @@ namespace Ryujinx.Modules
             var files = Directory.EnumerateFiles(HomeDir); // All files directly in base dir.
             foreach(var uFiles in UserFiles)
             {
-                files = files.Where(u => u.Contains(uFiles)).ToList();
+                //files = files.Where(u => !u.Contains(uFiles)).ToList();
+                Console.WriteLine(uFiles + " was removed from paths.");
             }
             //Change allFiles list to exclude user files
             //allFiles = DirFiles.Except(UserFiles).ToList();
@@ -604,7 +612,7 @@ namespace Ryujinx.Modules
                 }
             }
 
-            return files.Where(f => !new FileInfo(f).Attributes.HasFlag(FileAttributes.Hidden | FileAttributes.System));
+            return files.Where(f => !new FileInfo(f).Attributes.HasFlag(FileAttributes.Hidden | FileAttributes.System) && !UserFiles.Contains(Path.GetFileName(f)));
         }
 
         private static void MoveAllFilesOver(string root, string dest, UpdateDialog dialog)
