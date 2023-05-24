@@ -465,6 +465,7 @@ namespace Ryujinx.Modules
             File.Delete(updateFile);
 
             List<string> allFiles = EnumerateFilesToDelete().ToList();
+
             /*var oldFiles = Directory.EnumerateFiles(UpdatePublishDir, "*", SearchOption.TopDirectoryOnly);
             List<string> OldFiles = new List<string>();
             foreach (string oFile in oldFiles)
@@ -574,7 +575,8 @@ namespace Ryujinx.Modules
         private static IEnumerable<string> EnumerateFilesToDelete()
         {
             var files = Directory.EnumerateFiles(HomeDir); // All files directly in base dir.
-            if(Running)
+
+            if (Running)
             {
                 //Get loose files in base directory and store them in a list
                 var dirFiles = Directory.EnumerateFiles(HomeDir, "*", SearchOption.TopDirectoryOnly);
@@ -595,28 +597,44 @@ namespace Ryujinx.Modules
                 //Compare the loose files in base directory against the loose files from the incoming update, and store foreign ones in a user list
                 List<string> UserFiles = DirFiles.Except(OldFiles).ToList();
 
-                foreach (var uFiles in UserFiles)
+                /*foreach (var uFiles in UserFiles)
                 {
                     files = files.Where(u => !u.Contains(uFiles)).ToList();
                     //Console.WriteLine(uFiles + " was removed from paths.");
                 }
                 //Change allFiles list to exclude user files
-                //allFiles = DirFiles.Except(UserFiles).ToList();
-            }
+                //allFiles = DirFiles.Except(UserFiles).ToList();*/
 
-            if (OperatingSystem.IsWindows())
-            {
-                foreach (string dir in WindowsDependencyDirs)
+                if (OperatingSystem.IsWindows())
                 {
-                    string dirPath = Path.Combine(HomeDir, dir);
-                    if (Directory.Exists(dirPath))
+                    foreach (string dir in WindowsDependencyDirs)
                     {
-                        files = files.Concat(Directory.EnumerateFiles(dirPath, "*", SearchOption.AllDirectories));
+                        string dirPath = Path.Combine(HomeDir, dir);
+                        if (Directory.Exists(dirPath))
+                        {
+                            files = files.Concat(Directory.EnumerateFiles(dirPath, "*", SearchOption.AllDirectories));
+                        }
                     }
                 }
-            }
 
-            return files.Where(f => !new FileInfo(f).Attributes.HasFlag(FileAttributes.Hidden | FileAttributes.System));
+                return files.Where(f => !new FileInfo(f).Attributes.HasFlag(FileAttributes.Hidden | FileAttributes.System) || !UserFiles.Contains(Path.GetFileName(f)));
+            }
+            else
+            {
+                if (OperatingSystem.IsWindows())
+                {
+                    foreach (string dir in WindowsDependencyDirs)
+                    {
+                        string dirPath = Path.Combine(HomeDir, dir);
+                        if (Directory.Exists(dirPath))
+                        {
+                            files = files.Concat(Directory.EnumerateFiles(dirPath, "*", SearchOption.AllDirectories));
+                        }
+                    }
+                }
+
+                return files.Where(f => !new FileInfo(f).Attributes.HasFlag(FileAttributes.Hidden | FileAttributes.System));
+            }
         }
 
         private static void MoveAllFilesOver(string root, string dest, UpdateDialog dialog)
