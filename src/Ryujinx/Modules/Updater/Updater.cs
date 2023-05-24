@@ -466,30 +466,32 @@ namespace Ryujinx.Modules
 
             List<string> allFiles = EnumerateFilesToDelete().ToList();
 
+            //Get loose files in base directory and store them in a list
+            var dirFiles = Directory.EnumerateFiles(HomeDir, "*", SearchOption.TopDirectoryOnly);
+            List<string> DirFiles = new List<string>();
+            foreach (string dFile in dirFiles)
+            {
+                DirFiles.Add(Path.GetFileName(dFile));
+            }
+
+            //Get loose file that are supposed to be in base directory from temporary update files
+            var oldFiles = Directory.EnumerateFiles(UpdatePublishDir, "*", SearchOption.TopDirectoryOnly);
+            List<string> OldFiles = new List<string>();
+            foreach (string oFile in oldFiles)
+            {
+                OldFiles.Add(Path.GetFileName(oFile));
+            }
+
+            //Compare the loose files in base directory against the loose files from the incoming update, and store foreign ones in a user list
+            List<string> UserFiles = DirFiles.Except(OldFiles).ToList();
+
             updateDialog.MainText.Text        = "Renaming Old Files...";
             updateDialog.ProgressBar.Value    = 0;
             updateDialog.ProgressBar.MaxValue = allFiles.Count;
+
             // Replace old files
             await Task.Run(() =>
             {
-                //Get loose files in base directory and store them in a list
-                var dirFiles = Directory.EnumerateFiles(HomeDir, "*", SearchOption.TopDirectoryOnly);
-                List<string> DirFiles = new List<string>();
-                foreach (string dFile in dirFiles)
-                {
-                    DirFiles.Add(Path.GetFileName(dFile));
-                }
-                //Get loose file that are supposed to be in base directory from temporary update files
-                var oldFiles = Directory.EnumerateFiles(UpdatePublishDir, "*", SearchOption.TopDirectoryOnly);
-                List<string> OldFiles = new List<string>();
-                foreach (string oFile in oldFiles)
-                {
-                    OldFiles.Add(Path.GetFileName(oFile));
-                }
-                //Compare the loose files in base directory against the loose files from the incoming update, and store foreign ones in a user list
-                List<string> UserFiles = DirFiles.Except(OldFiles).ToList();
-                //Change allFiles list to exclude user files
-                allFiles = DirFiles.Except(UserFiles).ToList();
                 foreach (string file in allFiles)
                 {
                     try
@@ -583,6 +585,8 @@ namespace Ryujinx.Modules
         private static IEnumerable<string> EnumerateFilesToDelete()
         {
             var files = Directory.EnumerateFiles(HomeDir); // All files directly in base dir.
+            //Change allFiles list to exclude user files
+            //allFiles = DirFiles.Except(UserFiles).ToList();
 
             if (OperatingSystem.IsWindows())
             {
