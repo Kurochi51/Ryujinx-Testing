@@ -508,6 +508,7 @@ namespace Ryujinx.Modules
             });
 
             Directory.Delete(UpdateDir, true);
+            await Task.Run(CleanupUpdate);
 
             updateDialog.MainText.Text      = "Update Complete!";
             updateDialog.SecondaryText.Text = "Do you want to restart Ryujinx now?";
@@ -595,7 +596,7 @@ namespace Ryujinx.Modules
             foreach(var uFiles in UserFiles)
             {
                 files = files.Where(u => !u.Contains(uFiles)).ToList();
-                Console.WriteLine(uFiles + " was removed from paths.");
+                //Console.WriteLine(uFiles + " was removed from paths.");
             }
             //Change allFiles list to exclude user files
             //allFiles = DirFiles.Except(UserFiles).ToList();
@@ -631,15 +632,7 @@ namespace Ryujinx.Modules
 
             foreach (string file in Directory.GetFiles(root))
             {
-                try
-                {
-                    File.Move(file, Path.Combine(dest, Path.GetFileName(file)), true);
-                }
-                catch (Exception e)
-                {
-                    GtkDialog.CreateWarningDialog("Failed to move the update Ryujinx files.", "Faulty file: " + file + " at " + Path.Combine(dest, Path.GetFileName(file)) + ". Because " + e);
-
-                }
+                File.Move(file, Path.Combine(dest, Path.GetFileName(file)), true);
 
                 Application.Invoke(delegate
                 {
