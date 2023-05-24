@@ -622,7 +622,6 @@ namespace Ryujinx.Modules
                 catch (Exception e)
                 {
                     GtkDialog.CreateWarningDialog("Failed to move the update Ryujinx files.", "Faulty file: " + file + " at " + Path.Combine(dest, Path.GetFileName(file)) + ". Because " + e);
-                    Logger.Error?.Print(LogClass.Application, "Failed to convert the current Ryujinx version!");
 
                 }
 
