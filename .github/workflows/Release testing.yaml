@@ -77,7 +77,7 @@ jobs:
               
             - name: Publish Ryujinx
               run: |
-                dotnet publish -c Release -r win10-x64 -o ./publish_gtk/publish -p:Version="${{ steps.version_info.outputs.build_version }}" -p:SourceRevisionId="${{ steps.version_info.outputs.git_short_hash }}" -p:DebugType=embedded src/Ryujinx --self-contained true
+                dotnet publish -c Release -r win10-x64 -o ./publish_gtk/publish -p:Version="${{ steps.version_info.outputs.build_version }}" -p:SourceRevisionId="${{ steps.version_info.outputs.git_short_hash }}" src/Ryujinx --self-contained true
               
             # - name: Upload artifacts
               # uses: actions/upload-artifact@v3
