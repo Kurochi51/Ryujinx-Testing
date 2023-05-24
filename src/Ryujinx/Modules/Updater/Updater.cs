@@ -584,7 +584,11 @@ namespace Ryujinx.Modules
             //Compare the loose files in base directory against the loose files from the incoming update, and store foreign ones in a user list
             List<string> UserFiles = DirFiles.Except(OldFiles).ToList();
 
-            var files = Directory.EnumerateFiles(HomeDir).Except(UserFiles); // All files directly in base dir.
+            var files = Directory.EnumerateFiles(HomeDir); // All files directly in base dir.
+            foreach(var uFiles in UserFiles)
+            {
+                files = files.Where(u => u.Contains(uFiles)).ToList();
+            }
             //Change allFiles list to exclude user files
             //allFiles = DirFiles.Except(UserFiles).ToList();
 
