@@ -43,7 +43,7 @@ namespace Ryujinx.Modules
         // On Windows, GtkSharp.Dependencies adds these extra dirs that must be cleaned during updates.
         private static readonly string[] WindowsDependencyDirs = new string[] { "bin", "etc", "lib", "share" };
         // This is a list of loose files shipped with release in base dir
-        private static readonly string[] OldFiles = new string[] { "alsoft.ini", "avcodec-59.dll", "avutil-57.dll", "clrcompression.dll", "glfw3.dll", "libarmeilleure-jitsupport.dylib", "libsoundio.dll", "LICENSE.txt", "OpenAL32.dll", "Ryujinx.exe", "Ryujinx.SDL2.Common.dll.config", "SDL2.dll", "THIRDPARTY.md" };
+        //private static readonly string[] OldFiles = new string[] { "alsoft.ini", "avcodec-59.dll", "avutil-57.dll", "clrcompression.dll", "glfw3.dll", "libarmeilleure-jitsupport.dylib", "libsoundio.dll", "LICENSE.txt", "OpenAL32.dll", "Ryujinx.exe", "Ryujinx.SDL2.Common.dll.config", "SDL2.dll", "THIRDPARTY.md" };
 
         private static HttpClient ConstructHttpClient()
         {
@@ -479,7 +479,14 @@ namespace Ryujinx.Modules
                 {
                     DirFiles.Add(Path.GetFileName(dFile));
                 }
-                //Compare the loose files in base directory against a pre-established list of shipped files, and store foreign ones in a user list
+                //Get loose file that are supposed to be in base directory from temporary update files
+                var oldFiles = Directory.EnumerateFiles(UpdatePublishDir, "*", SearchOption.TopDirectoryOnly);
+                List<string> OldFiles = new List<string>();
+                foreach (string oFile in oldFiles)
+                {
+                    OldFiles.Add(Path.GetFileName(oFile));
+                }
+                //Compare the loose files in base directory against the loose files from the incoming update, and store foreign ones in a user list
                 List<string> UserFiles = DirFiles.Except(OldFiles).ToList();
                 //Change allFiles list to exclude user files
                 allFiles = DirFiles.Except(UserFiles).ToList();
