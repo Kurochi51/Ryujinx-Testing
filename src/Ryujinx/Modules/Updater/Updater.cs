@@ -97,65 +97,6 @@ namespace Ryujinx.Modules
             }
             catch
             {
-                //Console.WriteLine("HomeDir: " + HomeDir);
-                // Find all files in base directory and store unknown files into a new list
-                /*var dirFiles = Directory.GetFiles(HomeDir, "*", SearchOption.TopDirectoryOnly);
-                List<string> DirFiles = new List<string>();
-                foreach ( string dFile in dirFiles)
-                    DirFiles.Add(Path.GetFileName(dFile));
-                List<string> UserFiles = DirFiles.Except(OldFiles).ToList();
-
-                foreach (var dFile in dirFiles)
-                    {
-                    //Console.WriteLine("Base dir files: " + Path.GetFileName(uFile));
-                    foreach (string uFile in UserFiles)
-                    {
-                        string p = Path.GetFileName(dFile);
-                        //Console.WriteLine(oldFile + " being checked right now against " + Path.GetFileName(uFile));
-                        if (!p.Contains(uFile))
-                        {
-                            UserFiles.Add(p);
-                            break;
-                        }
-                        if (!Path.GetFileName(oldFile).Contains(dFile) && !UserFiles.Contains(Path.GetFileName(dFile)))
-                        {
-                            UserFiles.Add(Path.GetFileName(dFile));
-                        }
-                        //else
-                        //Console.WriteLine(Path.GetFileName(dFile) + " is a default ryujinx file.");
-                    }
-                }
-                Console.WriteLine(UserFiles.ToString());
-                //Console.WriteLine("Number of base dir files: " + dirFiles);
-                //Console.WriteLine("User files in base dir: " + UserFiles.Count());
-                List<string> allFiles = EnumerateFilesToDelete().ToList();
-                foreach (string file in allFiles)
-                {
-                    //Check if file is a user file, and ignore if true
-                    foreach (string uFile in UserFiles)
-                    {
-                        if (!file.Equals(uFile))
-                        {
-                            try
-                            {
-                                {
-                                    Console.WriteLine(file + " was checked against " + uFile);
-                                    //File.Move(file, file + ".ryuold");
-                                    /Application.Invoke(delegate
-                                    {
-                                        updateDialog.ProgressBar.Value++;
-                                    });
-                                }
-                            }
-                            catch
-                            {
-                                Logger.Warning?.Print(LogClass.Application, "Updater was unable to rename file: " + file);
-                            }
-                        }
-                        //else
-                        //Console.WriteLine("User file in base dir: " + uFile);
-                    }
-                }*/
                 GtkDialog.CreateWarningDialog("Failed to convert the current Ryujinx version.", "Cancelling Update!");
                 Logger.Error?.Print(LogClass.Application, "Failed to convert the current Ryujinx version!");
 
@@ -528,60 +469,30 @@ namespace Ryujinx.Modules
             updateDialog.MainText.Text        = "Renaming Old Files...";
             updateDialog.ProgressBar.Value    = 0;
             updateDialog.ProgressBar.MaxValue = allFiles.Count;
-
-            // Get amount of files in base dir
-            // int OldFileNumber = OldFiles.Length;
-
             // Replace old files
             await Task.Run(() =>
             {
-            //Console.WriteLine("HomeDir: " + HomeDir);
-            // Find all files in base directory and store unknown files into a new list
-            /*var dirFiles = Directory.EnumerateFiles(HomeDir,"*.*",SearchOption.TopDirectoryOnly);
-            List<string> UserFiles = new List<string>();
-            foreach (var dFile in dirFiles)
-            {
-                //Console.WriteLine("Base dir files: " + Path.GetFileName(uFile));
-                foreach (string oldFile in OldFiles)
-                {
-                    //Console.WriteLine(oldFile + " being checked right now against " + Path.GetFileName(uFile));
-                    if (!Path.GetFileName(dFile).Equals(oldFile))
-                    {
-                        UserFiles.Add(Path.GetFileName(dFile));
-                    }
-                    //else
-                        //Console.WriteLine(Path.GetFileName(dFile) + " is a default ryujinx file.");
-                }
-            }*/
+                //Get loose files in base directory and store them in a list
                 var dirFiles = Directory.EnumerateFiles(HomeDir, "*", SearchOption.TopDirectoryOnly);
                 List<string> DirFiles = new List<string>();
                 foreach (string dFile in dirFiles)
                 {
                     DirFiles.Add(Path.GetFileName(dFile));
                 }
+                //Compare the loose files in base directory against a pre-established list of shipped files, and store foreign ones in a user list
                 List<string> UserFiles = DirFiles.Except(OldFiles).ToList();
+                //Change allFiles list to exclude user files
                 allFiles = DirFiles.Except(UserFiles).ToList();
-                Console.WriteLine("Number of base dir files: " + DirFiles.Count);
-                foreach (string dfile in DirFiles)
-                {
-                    Console.WriteLine("User files: " + dfile);
-                }
-                Console.WriteLine("Number of user files in base dir: " + UserFiles.Count);
-                foreach (string ufile in UserFiles)
-                {
-                    Console.WriteLine("User files: " + ufile);
-                }
                 foreach (string file in allFiles)
                 {
                     try
                     {
+                        File.Move(file, file + ".ryuold");
+
+                        Application.Invoke(delegate
                         {
-                            File.Move(file, file + ".ryuold");
-                            Application.Invoke(delegate
-                            {
-                                updateDialog.ProgressBar.Value++;
-                            });
-                        }
+                            updateDialog.ProgressBar.Value++;
+                        });
                     }
                     catch
                     {
@@ -633,7 +544,7 @@ namespace Ryujinx.Modules
                 return false;
             }
 
-            /*if (Program.Version.Contains("dirty") || !ReleaseInformation.IsValid())
+            if (Program.Version.Contains("dirty") || !ReleaseInformation.IsValid())
             {
                 if (showWarnings)
                 {
@@ -641,7 +552,7 @@ namespace Ryujinx.Modules
                 }
 
                 return false;
-            }*/
+            }
 
             return true;
 #else
