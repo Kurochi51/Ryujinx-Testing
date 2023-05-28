@@ -570,21 +570,14 @@ namespace Ryujinx.Modules
             {
                 //Get loose files in base directory and store them in a list.
                 var oldFiles = Directory.EnumerateFiles(HomeDir, "*", SearchOption.TopDirectoryOnly).ToList();
-                List<string> OldFiles = new List<string>();
-                foreach(var oFile in oldFiles)
-                {
-                    OldFiles.Add(Path.GetFileName(oFile));
-                }
+                oldFiles = oldFiles.Select(Path.GetFileName).ToList();
 
                 //Get loose file that are in temporary update files base dir.
                 var newFiles = Directory.EnumerateFiles(UpdatePublishDir, "*", SearchOption.TopDirectoryOnly).ToList();
-                List<string> NewFiles = new List<string>();
-                foreach(var nFile in newFiles)
-                {
-                    NewFiles.Add(Path.GetFileName(nFile));
-                }
+                newFiles = newFiles.Select(Path.GetFileName).ToList();
+
                 //Compare the loose files in base directory against the loose files from the incoming update, and store foreign ones in a user list.
-                var UserFiles = OldFiles.Except(NewFiles).ToList();
+                var UserFiles = oldFiles.Except(newFiles).ToList();
 
                 //Remove user files from the paths in files
                 foreach (var userFile in UserFiles)
