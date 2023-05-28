@@ -571,12 +571,12 @@ namespace Ryujinx.Modules
                 var oldFiles = Directory.EnumerateFiles(HomeDir, "*", SearchOption.TopDirectoryOnly).ToList();
                 foreach (var o in oldFiles)
                 {
-                    Console.WriteLine((Path.GetFileName(o) + " old base dir file.");
+                    Console.WriteLine((Path.GetFileName(o) + " old base dir file."));
                 }
                 var newFiles = Directory.EnumerateFiles(UpdatePublishDir, "*", SearchOption.TopDirectoryOnly).ToList();
                 foreach (var n in newFiles)
                 {
-                    Console.WriteLine((Path.GetFileName(n) + " new update dir file.");
+                    Console.WriteLine((Path.GetFileName(n) + " new update dir file."));
                 }
 
                 //Compare the loose files in base directory against the loose files from the incoming update, and store foreign ones in a user list
