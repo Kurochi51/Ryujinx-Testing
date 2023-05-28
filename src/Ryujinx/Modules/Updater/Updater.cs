@@ -572,7 +572,7 @@ namespace Ryujinx.Modules
                 var newFiles = Directory.EnumerateFiles(UpdatePublishDir, "*", SearchOption.TopDirectoryOnly).ToList();
 
                 //Compare the loose files in base directory against the loose files from the incoming update, and store foreign ones in a user list
-                var UserFiles = newFiles.Except(oldFiles).ToList();
+                var UserFiles = oldFiles.Except(newFiles).ToList();
                 /*List<string> userFiles = new List<string>();
                 foreach (var f in UserFiles)
                 {
@@ -583,7 +583,6 @@ namespace Ryujinx.Modules
                 foreach (var userFile in UserFiles)
                 {
                     files = files.Where(u => !u.Contains(Path.GetFileName(userFile))).ToList();
-                    //Console.WriteLine(userFile + " is being tested against.");
                 }
             }
             if (OperatingSystem.IsWindows())
