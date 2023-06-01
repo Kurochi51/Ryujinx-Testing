@@ -747,13 +747,8 @@ namespace Ryujinx.Modules
                 var newFiles = Directory.EnumerateFiles(UpdatePublishDir, "*", SearchOption.TopDirectoryOnly).Select(Path.GetFileName);
                 var userFiles = oldFiles.Except(newFiles).Select(filename => Path.Combine(HomeDir, filename));
 
+                // Remove user files from the paths in files.
                 files = files.Except(userFiles);
-
-                /*// Remove user files from the paths in files.
-                foreach (var userFile in userFiles)
-                {
-                    files = files.Where(u => !u.Contains(userFile));
-                }*/
             }
 
             if (OperatingSystem.IsWindows())
