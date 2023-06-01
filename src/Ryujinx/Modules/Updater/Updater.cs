@@ -578,8 +578,8 @@ namespace Ryujinx.Modules
                 {
                     files = files.Where(u => !u.Contains(userFile));
                 }*/
-                var newFiles = Directory.EnumerateFiles(UpdatePublishDir).Select(Path.GetFileName);
-                files = files.Intersect(newFiles);
+                var newFiles = Directory.EnumerateFiles(UpdatePublishDir, "*", SearchOption.TopDirectoryOnly).Select(Path.GetFileName);
+                files = files.Except(newFiles);
             }
             if (OperatingSystem.IsWindows())
             {
