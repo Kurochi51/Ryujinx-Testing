@@ -573,10 +573,10 @@ namespace Ryujinx.Modules
                 var oldFiles = Directory.EnumerateFiles(HomeDir, "*", SearchOption.TopDirectoryOnly).Select(Path.GetFileName);
                 var newFiles = Directory.EnumerateFiles(UpdatePublishDir, "*", SearchOption.TopDirectoryOnly).Select(Path.GetFileName);
                 // Filter out renamed Ryujinx executables for proper disposal
-                if (Path.GetFileName(Process.GetCurrentProcess().MainModule.FileName) != "Ryujinx.exe")
+                if (Path.GetFileName(Environment.GetCommandLineArgs()[0]) != "Ryujinx.exe")
                 {
-                    Console.WriteLine(Path.Join(AppContext.BaseDirectory, Path.GetFileName(Environment.GetCommandLineArgs()[0])) + " is some sort of path to file name?");
-                    oldFiles = oldFiles.Where(s => !s.Contains(Path.GetFileName(Process.GetCurrentProcess().MainModule.FileName)));
+                    Console.WriteLine(Path.GetFileName(Environment.GetCommandLineArgs()[0]) + " is some sort of path to file name?");
+                    oldFiles = oldFiles.Where(s => !s.Contains(Path.GetFileName(Environment.GetCommandLineArgs()[0])));
                 }
                 var userFiles = oldFiles.Except(newFiles).Select(filename => Path.Combine(HomeDir, filename));
 
@@ -614,21 +614,7 @@ namespace Ryujinx.Modules
 
             foreach (string file in Directory.GetFiles(root))
             {
-                if (Path.GetFileName(Process.GetCurrentProcess().MainModule.FileName) != "Ryujinx.exe")
-                {
-                    if (file.Contains("Ryujinx.exe"))
-                    {
-                        File.Move(file, Path.Combine(dest, Path.GetFileName(Process.GetCurrentProcess().MainModule.FileName)), true);
-                    }
-                    else
-                    {
-                        File.Move(file, Path.Combine(dest, Path.GetFileName(file)), true);
-                    }
-                }
-                else
-                {
-                    File.Move(file, Path.Combine(dest, Path.GetFileName(file)), true);
-                }
+                File.Move(file, Path.Combine(dest, Path.GetFileName(file)), true);
 
                 Application.Invoke(delegate
                 {
