@@ -23,7 +23,6 @@
     </a>
     <br>
     <br>
-    <img src="https://raw.githubusercontent.com/Ryujinx/Ryujinx-Website/master/public/assets/images/shell.png">
 </p>
 
 <h5 align="center">
