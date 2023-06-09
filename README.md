@@ -17,8 +17,8 @@
 
 </p>
 <p align="center">
-    <a href="https://github.com/Ryujinx/Ryujinx/actions/workflows/release.yml">
-        <img src="https://github.com/Ryujinx/Ryujinx/actions/workflows/release.yml/badge.svg"
+    <a href="https://github.com/Kurochi51/Ryujinx-Testing/actions/workflows/Release-testing.yml">
+        <img src="https://github.com/Kurochi51/Ryujinx-Testing/actions/workflows/Release-testing.yml/badge.svg"
             alt="">
     </a>
     <a href="https://crwd.in/ryujinx">
