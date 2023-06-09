@@ -1,4 +1,5 @@
-# <b>This is an unofficial repo for testing changes to the Ryujinx updater</b> [![Release](https://github.com/Kurochi51/Ryujinx-Testing/actions/workflows/Release-testing.yml/badge.svg)](https://github.com/Kurochi51/Ryujinx-Testing/actions/workflows/Release-testing.yml) [![Test](https://github.com/Kurochi51/Ryujinx-Testing/actions/workflows/test.yml/badge.svg)](https://github.com/Kurochi51/Ryujinx-Testing/actions/workflows/test.yml)
+# <b>This is an unofficial repo for testing changes to the Ryujinx updater</b>
+[![Release](https://github.com/Kurochi51/Ryujinx-Testing/actions/workflows/Release-testing.yml/badge.svg)](https://github.com/Kurochi51/Ryujinx-Testing/actions/workflows/Release-testing.yml) [![Test](https://github.com/Kurochi51/Ryujinx-Testing/actions/workflows/test.yml/badge.svg)](https://github.com/Kurochi51/Ryujinx-Testing/actions/workflows/test.yml)
 <h1 align="center">
   <a href="https://ryujinx.org/"><img src="https://i.imgur.com/WcCj6Rt.png" alt="Ryujinx" width="150"></a>
   <br>
