@@ -1,0 +1,39 @@
+name: Test latest
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '.github/*'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '*.yml'
+      - 'README.md'
+
+env:
+  POWERSHELL_TELEMETRY_OPTOUT: 1
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  RYUJINX_BASE_VERSION: "1.1"
+  
+jobs:
+  windows:
+    name: Release Windows x64
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+          
+      - uses: actions/setup-dotnet@v3
+        with:
+          global-json-file: global.json
+          
+      - name: Get git short hash
+        id: git_short_hash
+        run: echo "result=$(git rev-parse --short "${{ github.sha }}")" >> $GITHUB_OUTPUT
+        shell: bash
+        
+      - name: Build
+        run: |
+          dotnet build -c Release -p:Version="${{ env.RYUJINX_BASE_VERSION }}" -p:SourceRevisionId="${{ steps.git_short_hash.outputs.result }}" -p:ExtraDefineConstants=DISABLE_UPDATER
+        
+      - name: Test
+        run: |
+          dotnet test --no-build -c Release
