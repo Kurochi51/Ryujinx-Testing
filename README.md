@@ -7,8 +7,6 @@
         <img src="https://github.com/Kurochi51/Ryujinx-Testing/actions/workflows/Release-testing.yml/badge.svg"
             alt="">
     </a>
-    <br>
-    <br>
   </p>
   <br>
   <br>
