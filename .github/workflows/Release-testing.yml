@@ -75,6 +75,14 @@ jobs:
             - name: Create output dir
               run: "mkdir release_output"
               
+            - name: Build
+              run: |
+                dotnet build -c Release -p:Version="${{ env.RYUJINX_BASE_VERSION }}" -p:SourceRevisionId="${{ steps.git_short_hash.outputs.result }}"
+              
+            - name: Test
+              run: |
+                dotnet test --no-build -c Release
+              
             - name: Publish Ryujinx
               run: |
                 dotnet publish -c Release -r win10-x64 -o ./publish_gtk/publish -p:Version="${{ steps.version_info.outputs.build_version }}" -p:SourceRevisionId="${{ steps.version_info.outputs.git_short_hash }}" src/Ryujinx --self-contained true
