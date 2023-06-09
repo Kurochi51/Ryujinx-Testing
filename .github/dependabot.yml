@@ -7,7 +7,7 @@ updates:
     labels:
       - "infra"
     reviewers:
-      - marysaka
+      - Kurochi51
     commit-message:
       prefix: "ci"
 
@@ -19,6 +19,6 @@ updates:
     labels:
       - "infra"
     reviewers:
-      - marysaka
+      - Kurochi51
     commit-message:
       prefix: nuget
