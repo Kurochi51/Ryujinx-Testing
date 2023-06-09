@@ -14,7 +14,7 @@ name: Release
 env:
   POWERSHELL_TELEMETRY_OPTOUT: 1
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
-  RYUJINX_BASE_VERSION: "1.1.1"
+  RYUJINX_BASE_VERSION: "1.1"
   RYUJINX_TARGET_RELEASE_CHANNEL_NAME: "main"
   RYUJINX_TARGET_RELEASE_CHANNEL_OWNER: "Kurochi51"
   RYUJINX_TARGET_RELEASE_CHANNEL_REPO: "Ryujinx-Testing"
@@ -27,7 +27,7 @@ jobs:
         - name: Get version info
           id: version_info
           run: |
-            echo "build_version=${{ env.RYUJINX_BASE_VERSION }}.0${{ github.run_number }}" >> $GITHUB_OUTPUT
+            echo "build_version=${{ env.RYUJINX_BASE_VERSION }}.0.${{ github.run_number }}" >> $GITHUB_OUTPUT
           shell: bash
 
         - name: Create tag
