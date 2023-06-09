@@ -97,7 +97,7 @@ jobs:
                 name: ${{ steps.version_info.outputs.build_version }}
                 artifacts: "./release_output/*.zip"
                 tag: ${{ steps.version_info.outputs.build_version }}
-                body: "For more information about this release please check out the official [Changelog](https://github.com/Ryujinx/Ryujinx/wiki/Changelog)."
+                body: "Are you lost? This is no place to be in."
                 omitBodyDuringUpdate: true
                 allowUpdates: true
                 replacesArtifacts: true
