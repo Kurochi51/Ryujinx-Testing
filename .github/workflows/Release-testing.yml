@@ -92,7 +92,7 @@ jobs:
                 popd
               shell: bash
             - name: Pushing new release
-              uses: ncipollo/release-action@v1
+              uses: ncipollo/release-action@v1.12.0
               with:
                 name: ${{ steps.version_info.outputs.build_version }}
                 artifacts: "./release_output/*.zip"
