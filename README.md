@@ -1,6 +1,8 @@
 
 <h1 align="center">
   <br>
+  <b>This is an unofficial repo for testing changes to the Ryujinx updater</b>
+  <br>
   <a href="https://ryujinx.org/"><img src="https://i.imgur.com/WcCj6Rt.png" alt="Ryujinx" width="150"></a>
   <br>
   <b>Ryujinx</b>
