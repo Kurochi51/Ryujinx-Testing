@@ -2,6 +2,14 @@
 <h1 align="center">
   <br>
   <b>This is an unofficial repo for testing changes to the Ryujinx updater</b>
+  <p align="center">
+    <a href="https://github.com/Kurochi51/Ryujinx-Testing/actions/workflows/Release-testing.yml">
+        <img src="https://github.com/Kurochi51/Ryujinx-Testing/actions/workflows/Release-testing.yml/badge.svg"
+            alt="">
+    </a>
+    <br>
+    <br>
+  </p>
   <br>
   <br>
   <br>
@@ -19,14 +27,6 @@
        This emulator aims at providing excellent accuracy and performance, a user-friendly interface and consistent builds.
     It was written from scratch and development on the project began in September 2017. Ryujinx is available on Github under the <a href="https://github.com/Ryujinx/Ryujinx/blob/master/LICENSE.txt" target="_blank">MIT license</a>. <br />
 
-</p>
-<p align="center">
-    <a href="https://github.com/Kurochi51/Ryujinx-Testing/actions/workflows/Release-testing.yml">
-        <img src="https://github.com/Kurochi51/Ryujinx-Testing/actions/workflows/Release-testing.yml/badge.svg"
-            alt="">
-    </a>
-    <br>
-    <br>
 </p>
 
 <h5 align="center">
