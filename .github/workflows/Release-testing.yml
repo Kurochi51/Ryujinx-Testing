@@ -80,7 +80,8 @@ jobs:
             echo "git_short_hash=$(git rev-parse --short "${{ github.sha }}")" >> $GITHUB_OUTPUT
           shell: bash
           
-        - name: Configure for testing
+        - name: Configure for debug
+          if: matrix.configuration == 'Debug'
           run: |
             sed -r --in-place 's/\%\%RYUJINX_BUILD_VERSION\%\%/${{ steps.version_info.outputs.build_version }}/g;' src/Ryujinx.Common/ReleaseInformation.cs
             sed -r --in-place 's/\%\%RYUJINX_BUILD_GIT_HASH\%\%/${{ steps.version_info.outputs.git_short_hash }}/g;' src/Ryujinx.Common/ReleaseInformation.cs
@@ -101,8 +102,8 @@ jobs:
         - name: Publish Ryujinx Release
           if: matrix.configuration == 'Release'
           run: |
-            dotnet publish -c "${{ matrix.configuration }}" -r "${{ matrix.DOTNET_RUNTIME_IDENTIFIER }}" -o ./publish_gtk/publish -p:Version="${{ steps.version_info.outputs.build_version }}" -p:SourceRevisionId="${{ steps.version_info.outputs.git_short_hash }}" -p:DebugType=embedded -p:ExtraDefineConstants=DISABLE_UPDATER src/Ryujinx --self-contained true
-            dotnet publish -c "${{ matrix.configuration }}" -r "${{ matrix.DOTNET_RUNTIME_IDENTIFIER }}" -o ./publish_ava/publish -p:Version="${{ steps.version_info.outputs.build_version }}" -p:SourceRevisionId="${{ steps.version_info.outputs.git_short_hash }}" -p:DebugType=embedded -p:ExtraDefineConstants=DISABLE_UPDATER src/Ryujinx.Ava --self-contained true
+            dotnet publish -c "${{ matrix.configuration }}" -r "${{ matrix.DOTNET_RUNTIME_IDENTIFIER }}" -o ./publish_gtk/publish -p:Version="${{ env.RYUJINX_BASE_VERSION }}" -p:DebugType=embedded -p:SourceRevisionId="${{ steps.git_short_hash.outputs.result }}" -p:ExtraDefineConstants=DISABLE_UPDATER src/Ryujinx --self-contained true
+            dotnet publish -c "${{ matrix.configuration }}" -r "${{ matrix.DOTNET_RUNTIME_IDENTIFIER }}" -o ./publish_ava/publish -p:Version="${{ env.RYUJINX_BASE_VERSION }}" -p:DebugType=embedded -p:SourceRevisionId="${{ steps.git_short_hash.outputs.result }}" -p:ExtraDefineConstants=DISABLE_UPDATER src/Ryujinx.Ava --self-contained true
         
         - name: Packing Windows builds
           if: matrix.os == 'windows-latest'
@@ -111,7 +112,7 @@ jobs:
             7z a ../release_output/ryujinx-${{ matrix.configuration }}-${{ steps.version_info.outputs.build_version }}-${{ matrix.RELEASE_ZIP_OS_NAME }}.zip publish
             popd
             pushd publish_ava
-            7z a ../release_output/test-ava-ryujinx-${{ matrix.configuration }}-${{ steps.version_info.outputs.build_version }}-${{ matrix.RELEASE_ZIP_OS_NAME }}.zip publish
+            7z a ../release_output/Ava-ryujinx-${{ matrix.configuration }}-${{ steps.version_info.outputs.build_version }}-${{ matrix.RELEASE_ZIP_OS_NAME }}.zip publish
             popd
           shell: bash
           
@@ -124,7 +125,7 @@ jobs:
             popd
             pushd publish_ava
             chmod +x publish/Ryujinx.sh publish/Ryujinx.Ava
-            tar -czvf ../release_output/test-ava-ryujinx-${{ matrix.configuration }}-${{ steps.version_info.outputs.build_version }}-${{ matrix.RELEASE_ZIP_OS_NAME }}.tar.gz publish
+            tar -czvf ../release_output/Ava-ryujinx-${{ matrix.configuration }}-${{ steps.version_info.outputs.build_version }}-${{ matrix.RELEASE_ZIP_OS_NAME }}.tar.gz publish
             popd
           shell: bash
           
