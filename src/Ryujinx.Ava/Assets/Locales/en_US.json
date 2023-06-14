@@ -83,6 +83,7 @@
   "SettingsTabGeneralHideCursor": "Hide Cursor:",
   "SettingsTabGeneralHideCursorNever": "Never",
   "SettingsTabGeneralHideCursorOnIdle": "On Idle",
+  "SettingsTabGeneralHideCursorCustom":  "Custom",
   "SettingsTabGeneralHideCursorAlways": "Always",
   "SettingsTabGeneralGameDirectories": "Game Directories",
   "SettingsTabGeneralAdd": "Add",

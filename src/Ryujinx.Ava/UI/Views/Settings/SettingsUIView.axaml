@@ -50,6 +50,9 @@
                             <ComboBoxItem>
                                 <TextBlock Text="{locale:Locale SettingsTabGeneralHideCursorOnIdle}" />
                             </ComboBoxItem>
+							<ComboBoxItem>
+								<TextBlock Text="{locale:Locale SettingsTabGeneralHideCursorCustom}" />
+							</ComboBoxItem>
                             <ComboBoxItem>
                                 <TextBlock Text="{locale:Locale SettingsTabGeneralHideCursorAlways}" />
                             </ComboBoxItem>

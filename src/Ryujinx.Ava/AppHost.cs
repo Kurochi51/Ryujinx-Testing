@@ -1000,6 +1000,16 @@ namespace Ryujinx.Ava
                                     ShowCursor();
                                 }
                                 break;
+                            case HideCursorMode.Custom:
+                                if (Stopwatch.GetTimestamp() - _lastCursorMoveTime >= CursorHideIdleTime * Stopwatch.Frequency)
+                                {
+                                    HideCursor();
+                                }
+                                else
+                                {
+                                    ShowCursor();
+                                }
+                                break;
                             case HideCursorMode.Always:
                                 HideCursor();
                                 break;
