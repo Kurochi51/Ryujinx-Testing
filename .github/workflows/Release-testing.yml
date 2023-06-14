@@ -135,7 +135,7 @@ jobs:
             popd
           shell: bash
           
-        - name: Pushing Linux releases
+        - name: Pushing Linux builds
           if: matrix.os == 'ubuntu-latest'
           uses: ncipollo/release-action@v1.12.0
           with:
@@ -150,7 +150,7 @@ jobs:
             repo: ${{ env.RYUJINX_TARGET_RELEASE_CHANNEL_REPO }}
             token: ${{ secrets.RELEASE_TOKEN }}
             
-        - name: Pushing Windows releases
+        - name: Pushing Windows builds
           if: matrix.os == 'windows-latest'
           uses: ncipollo/release-action@v1.12.0
           with:
