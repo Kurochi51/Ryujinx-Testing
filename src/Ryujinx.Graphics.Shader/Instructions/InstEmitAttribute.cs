@@ -167,6 +167,7 @@ namespace Ryujinx.Graphics.Shader.Instructions
                     // gl_FrontFacing sometimes has incorrect (flipped) values depending how it is accessed on Intel GPUs.
                     // This weird trick makes it behave.
                     //res = context.ICompareLess(context.INegate(context.IConvertS32ToFP32(res)), Const(0));
+                    //Maybe it helps? who knows
                     res = context.ICompareLess(context.INegate(context.ConditionalSelect(res, ConstF(1f), ConstF(0f))), Const(0));
                 }
             }
