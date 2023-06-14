@@ -106,7 +106,7 @@ namespace Ryujinx.Modules
 
                 foreach (var asset in fetched.Assets)
                 {
-                    if (asset.Name.StartsWith("test-ava-ryujinx") && asset.Name.EndsWith(_platformExt))
+                    if (asset.Name.StartsWith("Ava-ryujinx-ReleaseWithDebugSymbols") && asset.Name.EndsWith(_platformExt))
                     {
                         _buildUrl = asset.BrowserDownloadUrl;
 
