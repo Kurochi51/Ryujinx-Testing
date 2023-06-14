@@ -97,30 +97,6 @@ namespace Ryujinx.Graphics.Shader.CodeGen.Glsl.Instructions
                 texCallBuilder.Append(str);
             }
 
-            string ApplyScaling(string vector)
-            {
-                if (context.Config.Stage.SupportsRenderScale() &&
-                    texOp.Inst == Instruction.ImageLoad &&
-                    !isBindless &&
-                    !isIndexed)
-                {
-                    // Image scales start after texture ones.
-                    int scaleIndex = context.Config.GetTextureDescriptors().Length + context.Config.FindImageDescriptorIndex(texOp);
-
-                    if (pCount == 3 && isArray)
-                    {
-                        // The array index is not scaled, just x and y.
-                        vector = $"ivec3(Helper_TexelFetchScale(({vector}).xy, {scaleIndex}), ({vector}).z)";
-                    }
-                    else if (pCount == 2 && !isArray)
-                    {
-                        vector = $"Helper_TexelFetchScale({vector}, {scaleIndex})";
-                    }
-                }
-
-                return vector;
-            }
-
             if (pCount > 1)
             {
                 string[] elems = new string[pCount];
@@ -130,7 +106,7 @@ namespace Ryujinx.Graphics.Shader.CodeGen.Glsl.Instructions
                     elems[index] = Src(AggregateType.S32);
                 }
 
-                Append(ApplyScaling($"ivec{pCount}({string.Join(", ", elems)})"));
+                Append($"ivec{pCount}({string.Join(", ", elems)})");
             }
             else
             {
@@ -232,17 +208,6 @@ namespace Ryujinx.Graphics.Shader.CodeGen.Glsl.Instructions
             string offsetExpr = GetSoureExpr(context, src1, GetSrcVarType(operation.Inst, 0));
 
             return $"{arrayName}[{offsetExpr}]";
-        }
-
-        public static string LoadStorage(CodeGenContext context, AstOperation operation)
-        {
-            IAstNode src1 = operation.GetSource(0);
-            IAstNode src2 = operation.GetSource(1);
-
-            string indexExpr  = GetSoureExpr(context, src1, GetSrcVarType(operation.Inst, 0));
-            string offsetExpr = GetSoureExpr(context, src2, GetSrcVarType(operation.Inst, 1));
-
-            return GetStorageBufferAccessor(indexExpr, offsetExpr, context.Config.Stage);
         }
 
         public static string Lod(CodeGenContext context, AstOperation operation)
@@ -348,60 +313,6 @@ namespace Ryujinx.Graphics.Shader.CodeGen.Glsl.Instructions
             string src = TypeConversion.ReinterpretCast(context, src2, srcType, AggregateType.U32);
 
             return $"{HelperFunctionNames.StoreShared8}({offsetExpr}, {src})";
-        }
-
-        public static string StoreStorage(CodeGenContext context, AstOperation operation)
-        {
-            IAstNode src1 = operation.GetSource(0);
-            IAstNode src2 = operation.GetSource(1);
-            IAstNode src3 = operation.GetSource(2);
-
-            string indexExpr  = GetSoureExpr(context, src1, GetSrcVarType(operation.Inst, 0));
-            string offsetExpr = GetSoureExpr(context, src2, GetSrcVarType(operation.Inst, 1));
-
-            AggregateType srcType = OperandManager.GetNodeDestType(context, src3);
-
-            string src = TypeConversion.ReinterpretCast(context, src3, srcType, AggregateType.U32);
-
-            string sb = GetStorageBufferAccessor(indexExpr, offsetExpr, context.Config.Stage);
-
-            return $"{sb} = {src}";
-        }
-
-        public static string StoreStorage16(CodeGenContext context, AstOperation operation)
-        {
-            IAstNode src1 = operation.GetSource(0);
-            IAstNode src2 = operation.GetSource(1);
-            IAstNode src3 = operation.GetSource(2);
-
-            string indexExpr  = GetSoureExpr(context, src1, GetSrcVarType(operation.Inst, 0));
-            string offsetExpr = GetSoureExpr(context, src2, GetSrcVarType(operation.Inst, 1));
-
-            AggregateType srcType = OperandManager.GetNodeDestType(context, src3);
-
-            string src = TypeConversion.ReinterpretCast(context, src3, srcType, AggregateType.U32);
-
-            string sb = GetStorageBufferAccessor(indexExpr, offsetExpr, context.Config.Stage);
-
-            return $"{HelperFunctionNames.StoreStorage16}({indexExpr}, {offsetExpr}, {src})";
-        }
-
-        public static string StoreStorage8(CodeGenContext context, AstOperation operation)
-        {
-            IAstNode src1 = operation.GetSource(0);
-            IAstNode src2 = operation.GetSource(1);
-            IAstNode src3 = operation.GetSource(2);
-
-            string indexExpr  = GetSoureExpr(context, src1, GetSrcVarType(operation.Inst, 0));
-            string offsetExpr = GetSoureExpr(context, src2, GetSrcVarType(operation.Inst, 1));
-
-            AggregateType srcType = OperandManager.GetNodeDestType(context, src3);
-
-            string src = TypeConversion.ReinterpretCast(context, src3, srcType, AggregateType.U32);
-
-            string sb = GetStorageBufferAccessor(indexExpr, offsetExpr, context.Config.Stage);
-
-            return $"{HelperFunctionNames.StoreStorage8}({indexExpr}, {offsetExpr}, {src})";
         }
 
         public static string TextureSample(CodeGenContext context, AstOperation operation)
@@ -584,53 +495,7 @@ namespace Ryujinx.Graphics.Shader.CodeGen.Glsl.Instructions
                 }
             }
 
-            string ApplyScaling(string vector)
-            {
-                if (intCoords)
-                {
-                    if (context.Config.Stage.SupportsRenderScale() &&
-                        !isBindless &&
-                        !isIndexed)
-                    {
-                        int index = context.Config.FindTextureDescriptorIndex(texOp);
-
-                        if (pCount == 3 && isArray)
-                        {
-                            // The array index is not scaled, just x and y.
-                            vector = "ivec3(Helper_TexelFetchScale((" + vector + ").xy, " + index + "), (" + vector + ").z)";
-                        }
-                        else if (pCount == 2 && !isArray)
-                        {
-                            vector = "Helper_TexelFetchScale(" + vector + ", " + index + ")";
-                        }
-                    }
-                }
-
-                return vector;
-            }
-
-            string ApplyBias(string vector)
-            {
-                int gatherBiasPrecision = context.Config.GpuAccessor.QueryHostGatherBiasPrecision();
-                if (isGather && gatherBiasPrecision != 0)
-                {
-                    // GPU requires texture gather to be slightly offset to match NVIDIA behaviour when point is exactly between two texels.
-                    // Offset by the gather precision divided by 2 to correct for rounding.
-
-                    if (pCount == 1)
-                    {
-                        vector = $"{vector} + (1.0 / (float(textureSize({samplerName}, 0)) * float({1 << (gatherBiasPrecision + 1)})))";
-                    }
-                    else
-                    {
-                        vector = $"{vector} + (1.0 / (vec{pCount}(textureSize({samplerName}, 0).{"xyz".Substring(0, pCount)}) * float({1 << (gatherBiasPrecision + 1)})))";
-                    }
-                }
-
-                return vector;
-            }
-
-            Append(ApplyBias(ApplyScaling(AssemblePVector(pCount))));
+            Append(AssemblePVector(pCount));
 
             string AssembleDerivativesVector(int count)
             {
@@ -750,7 +615,7 @@ namespace Ryujinx.Graphics.Shader.CodeGen.Glsl.Instructions
             }
             else
             {
-                (TextureDescriptor descriptor, int descriptorIndex) = context.Config.FindTextureDescriptor(texOp);
+                TextureDescriptor descriptor = context.Config.FindTextureDescriptor(texOp);
                 bool hasLod = !descriptor.Type.HasFlag(SamplerType.Multisample) && descriptor.Type != SamplerType.TextureBuffer;
                 string texCall;
 
@@ -767,37 +632,38 @@ namespace Ryujinx.Graphics.Shader.CodeGen.Glsl.Instructions
                     texCall = $"textureSize({samplerName}){GetMask(texOp.Index)}";
                 }
 
-                if (context.Config.Stage.SupportsRenderScale() &&
-                    (texOp.Index < 2 || (texOp.Type & SamplerType.Mask) == SamplerType.Texture3D) &&
-                    !isBindless &&
-                    !isIndexed)
-                {
-                    texCall = $"Helper_TextureSizeUnscale({texCall}, {descriptorIndex})";
-                }
-
                 return texCall;
             }
         }
 
-        private static string GenerateLoadOrStore(CodeGenContext context, AstOperation operation, bool isStore)
+        public static string GenerateLoadOrStore(CodeGenContext context, AstOperation operation, bool isStore)
         {
             StorageKind storageKind = operation.StorageKind;
 
             string varName;
             AggregateType varType;
             int srcIndex = 0;
-            int inputsCount = isStore ? operation.SourcesCount - 1 : operation.SourcesCount;
+            bool isStoreOrAtomic = operation.Inst == Instruction.Store || operation.Inst.IsAtomic();
+            int inputsCount = isStoreOrAtomic ? operation.SourcesCount - 1 : operation.SourcesCount;
+
+            if (operation.Inst == Instruction.AtomicCompareAndSwap)
+            {
+                inputsCount--;
+            }
 
             switch (storageKind)
             {
                 case StorageKind.ConstantBuffer:
+                case StorageKind.StorageBuffer:
                     if (!(operation.GetSource(srcIndex++) is AstOperand bindingIndex) || bindingIndex.Type != OperandType.Constant)
                     {
                         throw new InvalidOperationException($"First input of {operation.Inst} with {storageKind} storage must be a constant operand.");
                     }
 
                     int binding = bindingIndex.Value;
-                    BufferDefinition buffer = context.Config.Properties.ConstantBuffers[binding];
+                    BufferDefinition buffer = storageKind == StorageKind.ConstantBuffer
+                        ? context.Config.Properties.ConstantBuffers[binding]
+                        : context.Config.Properties.StorageBuffers[binding];
 
                     if (!(operation.GetSource(srcIndex++) is AstOperand fieldIndex) || fieldIndex.Type != OperandType.Constant)
                     {
@@ -901,15 +767,6 @@ namespace Ryujinx.Graphics.Shader.CodeGen.Glsl.Instructions
             }
 
             return varName;
-        }
-
-        private static string GetStorageBufferAccessor(string slotExpr, string offsetExpr, ShaderStage stage)
-        {
-            string sbName = OperandManager.GetShaderStagePrefix(stage);
-
-            sbName += "_" + DefaultNames.StorageNamePrefix;
-
-            return $"{sbName}[{slotExpr}].{DefaultNames.DataName}[{offsetExpr}]";
         }
 
         private static string GetMask(int index)

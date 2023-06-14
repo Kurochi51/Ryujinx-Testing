@@ -11,7 +11,6 @@ using Ryujinx.Ui.Widgets;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -577,6 +576,7 @@ namespace Ryujinx.Modules
                 // Remove user files from the paths in files.
                 files = files.Except(userFiles);
             }
+
             if (OperatingSystem.IsWindows())
             {
                 foreach (string dir in WindowsDependencyDirs)

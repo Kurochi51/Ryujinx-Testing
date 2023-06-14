@@ -216,6 +216,11 @@ namespace Ryujinx.Graphics.Vulkan
                 SType = StructureType.PhysicalDeviceCustomBorderColorFeaturesExt
             };
 
+            PhysicalDeviceDepthClipControlFeaturesEXT featuresDepthClipControl = new PhysicalDeviceDepthClipControlFeaturesEXT()
+            {
+                SType = StructureType.PhysicalDeviceDepthClipControlFeaturesExt
+            };
+
             PhysicalDevicePortabilitySubsetFeaturesKHR featuresPortabilitySubset = new PhysicalDevicePortabilitySubsetFeaturesKHR()
             {
                 SType = StructureType.PhysicalDevicePortabilitySubsetFeaturesKhr
@@ -242,6 +247,14 @@ namespace Ryujinx.Graphics.Vulkan
             {
                 featuresCustomBorderColor.PNext = features2.PNext;
                 features2.PNext = &featuresCustomBorderColor;
+            }
+
+            bool supportsDepthClipControl = _physicalDevice.IsDeviceExtensionPresent("VK_EXT_depth_clip_control");
+
+            if (supportsDepthClipControl)
+            {
+                featuresDepthClipControl.PNext = features2.PNext;
+                features2.PNext = &featuresDepthClipControl;
             }
 
             bool usePortability = _physicalDevice.IsDeviceExtensionPresent("VK_KHR_portability_subset");
@@ -293,6 +306,7 @@ namespace Ryujinx.Graphics.Vulkan
                 _physicalDevice.IsDeviceExtensionPresent("VK_EXT_fragment_shader_interlock"),
                 _physicalDevice.IsDeviceExtensionPresent("VK_NV_geometry_shader_passthrough"),
                 supportsSubgroupSizeControl,
+                features2.Features.ShaderFloat64,
                 featuresShaderInt8.ShaderInt8,
                 _physicalDevice.IsDeviceExtensionPresent("VK_EXT_shader_stencil_export"),
                 features2.Features.ShaderStorageImageMultisample,
@@ -310,6 +324,7 @@ namespace Ryujinx.Graphics.Vulkan
                 _physicalDevice.PhysicalDeviceFeatures.GeometryShader,
                 _physicalDevice.IsDeviceExtensionPresent("VK_NV_viewport_array2"),
                 _physicalDevice.IsDeviceExtensionPresent(ExtExternalMemoryHost.ExtensionName),
+                supportsDepthClipControl && featuresDepthClipControl.DepthClipControl,
                 propertiesSubgroupSizeControl.MinSubgroupSize,
                 propertiesSubgroupSizeControl.MaxSubgroupSize,
                 propertiesSubgroupSizeControl.RequiredSubgroupSizeStages,
@@ -574,17 +589,21 @@ namespace Ryujinx.Graphics.Vulkan
                 supportsFragmentShaderOrderingIntel: false,
                 supportsGeometryShader: Capabilities.SupportsGeometryShader,
                 supportsGeometryShaderPassthrough: Capabilities.SupportsGeometryShaderPassthrough,
+                supportsTransformFeedback: Capabilities.SupportsTransformFeedback,
                 supportsImageLoadFormatted: features2.Features.ShaderStorageImageReadWithoutFormat,
                 supportsLayerVertexTessellation: featuresVk12.ShaderOutputLayer,
                 supportsMismatchingViewFormat: true,
                 supportsCubemapView: !IsAmdGcn,
                 supportsNonConstantTextureOffset: false,
                 supportsShaderBallot: false,
+                supportsShaderBarrierDivergence: Vendor != Vendor.Intel,
+                supportsShaderFloat64: Capabilities.SupportsShaderFloat64,
                 supportsTextureShadowLod: false,
                 supportsViewportIndexVertexTessellation: featuresVk12.ShaderOutputViewportIndex,
                 supportsViewportMask: Capabilities.SupportsViewportArray2,
                 supportsViewportSwizzle: false,
                 supportsIndirectParameters: true,
+                supportsDepthClipControl: Capabilities.SupportsDepthClipControl,
                 maximumUniformBuffersPerStage: Constants.MaxUniformBuffersPerStage,
                 maximumStorageBuffersPerStage: Constants.MaxStorageBuffersPerStage,
                 maximumTexturesPerStage: Constants.MaxTexturesPerStage,

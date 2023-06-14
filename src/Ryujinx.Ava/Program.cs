@@ -191,7 +191,6 @@ namespace Ryujinx.Ava
                 {
                     "never" => HideCursorMode.Never,
                     "onidle" => HideCursorMode.OnIdle,
-                    "custom" =>HideCursorMode.Custom,
                     "always" => HideCursorMode.Always,
                     _ => ConfigurationState.Instance.HideCursor.Value
                 };
