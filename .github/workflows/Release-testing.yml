@@ -52,12 +52,10 @@ jobs:
           - os: ubuntu-latest
             OS_NAME: Linux x64
             DOTNET_RUNTIME_IDENTIFIER: linux-x64
-            RELEASE_ZIP_OS_NAME: linux_x64
 
           - os: windows-latest
             OS_NAME: Windows x64
             DOTNET_RUNTIME_IDENTIFIER: win10-x64
-            RELEASE_ZIP_OS_NAME: win_x64
 
         fail-fast: false
       steps:
@@ -79,7 +77,7 @@ jobs:
             echo "git_short_hash=$(git rev-parse --short "${{ github.sha }}")" >> $GITHUB_OUTPUT
           shell: bash
           
-        - name: Configure for debug release
+        - name: Configure for testing
           run: |
             sed -r --in-place 's/\%\%RYUJINX_BUILD_VERSION\%\%/${{ steps.version_info.outputs.build_version }}/g;' src/Ryujinx.Common/ReleaseInformation.cs
             sed -r --in-place 's/\%\%RYUJINX_BUILD_GIT_HASH\%\%/${{ steps.version_info.outputs.git_short_hash }}/g;' src/Ryujinx.Common/ReleaseInformation.cs
@@ -92,13 +90,13 @@ jobs:
           run: "mkdir release_output"
           
         - name: Publish Ryujinx Debug
-          if: matrix.configuration != 'Debug'
+          if: matrix.configuration == 'Debug'
           run: |
             dotnet publish -c "${{ matrix.configuration }}" -r "${{ matrix.DOTNET_RUNTIME_IDENTIFIER }}" -o ./publish_gtk/publish -p:Version="${{ steps.version_info.outputs.build_version }}" -p:SourceRevisionId="${{ steps.version_info.outputs.git_short_hash }}" src/Ryujinx --self-contained true
             dotnet publish -c "${{ matrix.configuration }}" -r "${{ matrix.DOTNET_RUNTIME_IDENTIFIER }}" -o ./publish_ava/publish -p:Version="${{ steps.version_info.outputs.build_version }}" -p:SourceRevisionId="${{ steps.version_info.outputs.git_short_hash }}" src/Ryujinx.Ava --self-contained true
 
         - name: Publish Ryujinx Release
-          if: matrix.configuration != 'Debug'
+          if: matrix.configuration == 'Release'
           run: |
             dotnet publish -c "${{ matrix.configuration }}" -r "${{ matrix.DOTNET_RUNTIME_IDENTIFIER }}" -o ./publish_gtk/publish -p:Version="${{ steps.version_info.outputs.build_version }}" -p:SourceRevisionId="${{ steps.version_info.outputs.git_short_hash }}" -p:DebugType=embedded -p:ExtraDefineConstants=DISABLE_UPDATER src/Ryujinx --self-contained true
             dotnet publish -c "${{ matrix.configuration }}" -r "${{ matrix.DOTNET_RUNTIME_IDENTIFIER }}" -o ./publish_ava/publish -p:Version="${{ steps.version_info.outputs.build_version }}" -p:SourceRevisionId="${{ steps.version_info.outputs.git_short_hash }}" -p:DebugType=embedded -p:ExtraDefineConstants=DISABLE_UPDATER src/Ryujinx.Ava --self-contained true
