@@ -4,9 +4,10 @@ on:
   push:
     branches: [ main ]
     paths-ignore:
-      - '.github/*'
-      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/**'
       - '*.yml'
+      - '*.json'
+      - '*.config'
       - 'README.md'
 
 name: Build
