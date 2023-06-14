@@ -80,7 +80,7 @@ jobs:
             echo "git_short_hash=$(git rev-parse --short "${{ github.sha }}")" >> $GITHUB_OUTPUT
           shell: bash
           
-        - name: Configure for debug
+        - name: Configure for alt debug
           if: matrix.configuration == 'ReleaseWithDebugSymbols'
           run: |
             sed -r --in-place 's/\%\%RYUJINX_BUILD_VERSION\%\%/${{ steps.version_info.outputs.build_version }}/g;' src/Ryujinx.Common/ReleaseInformation.cs
