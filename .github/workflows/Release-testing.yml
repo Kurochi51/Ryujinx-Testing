@@ -52,10 +52,12 @@ jobs:
           - os: ubuntu-latest
             OS_NAME: Linux x64
             DOTNET_RUNTIME_IDENTIFIER: linux-x64
-
+            RELEASE_ZIP_OS_NAME: linux_x64
+            
           - os: windows-latest
             OS_NAME: Windows x64
             DOTNET_RUNTIME_IDENTIFIER: win10-x64
+            RELEASE_ZIP_OS_NAME: win_x64
 
         fail-fast: false
       steps:
@@ -105,10 +107,10 @@ jobs:
           if: matrix.os == 'windows-latest'
           run: |
             pushd publish_gtk
-            7z a ../release_output/ryujinx-${{ steps.version_info.outputs.build_version }}-win_x64.zip publish
+            7z a ../release_output/ryujinx-${{ matrix.configuration }}-${{ steps.version_info.outputs.build_version }}-${{ matrix.RELEASE_ZIP_OS_NAME }}.zip publish
             popd
             pushd publish_ava
-            7z a ../release_output/test-ava-ryujinx-${{ steps.version_info.outputs.build_version }}-win_x64.zip publish
+            7z a ../release_output/test-ava-ryujinx-${{ matrix.configuration }}-${{ steps.version_info.outputs.build_version }}-${{ matrix.RELEASE_ZIP_OS_NAME }}.zip publish
             popd
           shell: bash
           
@@ -117,11 +119,11 @@ jobs:
           run: |
             pushd publish_gtk
             chmod +x publish/Ryujinx.sh publish/Ryujinx
-            tar -czvf ../release_output/ryujinx-${{ steps.version_info.outputs.build_version }}-linux_x64.tar.gz publish
+            tar -czvf ../release_output/ryujinx-${{ matrix.configuration }}-${{ steps.version_info.outputs.build_version }}-${{ matrix.RELEASE_ZIP_OS_NAME }}.tar.gz publish
             popd
             pushd publish_ava
             chmod +x publish/Ryujinx.sh publish/Ryujinx.Ava
-            tar -czvf ../release_output/test-ava-ryujinx-${{ steps.version_info.outputs.build_version }}-linux_x64.tar.gz publish
+            tar -czvf ../release_output/test-ava-ryujinx-${{ matrix.configuration }}-${{ steps.version_info.outputs.build_version }}-${{ matrix.RELEASE_ZIP_OS_NAME }}.tar.gz publish
             popd
           shell: bash
           
