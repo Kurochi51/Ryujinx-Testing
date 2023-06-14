@@ -156,27 +156,31 @@ namespace Ryujinx.Graphics.Shader.Instructions
 
                     if (context.Config.ImapTypes[index].GetFirstUsedType() == PixelImap.Perspective)
                     {
-                        res = context.FPMultiply(res, context.Load(StorageKind.Input, IoVariable.FragmentCoord, null, Const(3)));
                         Logger.Warning?.Print(LogClass.Application, $"res is: {res.Value}");
+                        res = context.FPMultiply(res, context.Load(StorageKind.Input, IoVariable.FragmentCoord, null, Const(3)));
+                        Logger.Warning?.Print(LogClass.Application, $"res was changed to: {res.Value}");
                     }
-                    Logger.Warning?.Print(LogClass.Application, $"op.Imm10 is: {op.Imm10}");
+
+                    Logger.Warning?.Print(LogClass.Application, $"op.Imm10 matched is: {op.Imm10}");
                 }
                 else if (op.Imm10 == AttributeConsts.PositionX || op.Imm10 == AttributeConsts.PositionY)
                 {
                     // FragCoord X/Y must be divided by the render target scale, if resolution scaling is active,
                     // because the shader code is not expecting scaled values.
-                    res = context.FPDivide(res, context.Load(StorageKind.ConstantBuffer, SupportBuffer.Binding, Const((int)SupportBufferField.RenderScale), Const(0)));
+                    Logger.Warning?.Print(LogClass.Application, $"op.Imm10 matched is: {op.Imm10}");
                     Logger.Warning?.Print(LogClass.Application, $"res is: {res.Value}");
-                    Logger.Warning?.Print(LogClass.Application, $"op.Imm10 is: {op.Imm10}");
+                    res = context.FPDivide(res, context.Load(StorageKind.ConstantBuffer, SupportBuffer.Binding, Const((int)SupportBufferField.RenderScale), Const(0)));
+                    Logger.Warning?.Print(LogClass.Application, $"res was changed to: {res.Value}");
                 }
                 else if (op.Imm10 == AttributeConsts.FrontFacing && context.Config.GpuAccessor.QueryHostHasFrontFacingBug())
                 {
                     // gl_FrontFacing sometimes has incorrect (flipped) values depending how it is accessed on Intel GPUs.
                     // This weird trick makes it behave.
                     //res = context.ICompareLess(context.INegate(context.IConvertS32ToFP32(res)), Const(0));
-                    res = context.ICompareLess(context.INegate(context.ConditionalSelect(res, ConstF(1f), ConstF(0f))), Const(0));
+                    Logger.Warning?.Print(LogClass.Application, $"op.Imm10 matched is: {op.Imm10}");
                     Logger.Warning?.Print(LogClass.Application, $"res is: {res.Value}");
-                    Logger.Warning?.Print(LogClass.Application, $"op.Imm10 is: {op.Imm10}");
+                    res = context.ICompareLess(context.INegate(context.ConditionalSelect(res, ConstF(1f), ConstF(0f))), Const(0));
+                    Logger.Warning?.Print(LogClass.Application, $"res was changed to: {res.Value}");
                 }
             }
 
