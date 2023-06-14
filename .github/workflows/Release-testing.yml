@@ -135,11 +135,27 @@ jobs:
             popd
           shell: bash
           
-        - name: Pushing new release
+        - name: Pushing Linux releases
+          if: matrix.os == 'ubuntu-latest'
           uses: ncipollo/release-action@v1.12.0
           with:
             name: ${{ steps.version_info.outputs.build_version }}
-            artifacts: "./release_output/*.zip, ./release_output/*.tar.gz"
+            artifacts: "./release_output/*.tar.gz"
+            tag: ${{ steps.version_info.outputs.build_version }}
+            body: "Are you lost? This is no place to be in."
+            omitBodyDuringUpdate: true
+            allowUpdates: true
+            replacesArtifacts: true
+            owner: ${{ env.RYUJINX_TARGET_RELEASE_CHANNEL_OWNER }}
+            repo: ${{ env.RYUJINX_TARGET_RELEASE_CHANNEL_REPO }}
+            token: ${{ secrets.RELEASE_TOKEN }}
+            
+        - name: Pushing Windows releases
+          if: matrix.os == 'windows-latest'
+          uses: ncipollo/release-action@v1.12.0
+          with:
+            name: ${{ steps.version_info.outputs.build_version }}
+            artifacts: "./release_output/*.zip"
             tag: ${{ steps.version_info.outputs.build_version }}
             body: "Are you lost? This is no place to be in."
             omitBodyDuringUpdate: true
