@@ -179,7 +179,7 @@ namespace Ryujinx.Graphics.Shader.Instructions
                     //res = context.ICompareLess(context.INegate(context.IConvertS32ToFP32(res)), Const(0));
                     Logger.Warning?.Print(LogClass.Application, $"op.Imm10 matched is: {op.Imm10}");
                     Logger.Warning?.Print(LogClass.Application, $"res is: {res.Value}");
-                    res = context.ICompareLess(context.INegate(context.ConditionalSelect(res, ConstF(1f), ConstF(0f))), Const(0));
+                    res = context.ICompareLess(context.INegate(context.FP32ConvertToS32(context.ConditionalSelect(res, ConstF(1f), ConstF(0f)))), Const(0));
                     Logger.Warning?.Print(LogClass.Application, $"res was changed to: {res.Value}");
                 }
             }
