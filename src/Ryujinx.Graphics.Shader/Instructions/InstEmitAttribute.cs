@@ -2,7 +2,7 @@ using Ryujinx.Common.Logging;
 using Ryujinx.Graphics.Shader.Decoders;
 using Ryujinx.Graphics.Shader.IntermediateRepresentation;
 using Ryujinx.Graphics.Shader.Translation;
-using System;
+
 using static Ryujinx.Graphics.Shader.Instructions.InstEmitHelper;
 using static Ryujinx.Graphics.Shader.IntermediateRepresentation.OperandHelper;
 
@@ -176,6 +176,8 @@ namespace Ryujinx.Graphics.Shader.Instructions
                     Logger.Warning?.Print(LogClass.Application, $"res was changed to: {res.Value}");
                 }
             }
+
+            Logger.Warning?.Print(LogClass.Application, $"res is: {res} and I get this from conditional select: {context.ConditionalSelect(res, ConstF(1f), ConstF(0f))}");
 
             if (op.IpaOp == IpaOp.Multiply && !isFixedFunc)
             {
