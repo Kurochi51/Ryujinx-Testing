@@ -143,8 +143,6 @@ namespace Ryujinx.Graphics.Shader.Instructions
 
                 res = context.Load(StorageKind.Input, IoVariable.UserDefined, null, vecIndex, elemIndex);
                 res = context.FPMultiply(res, context.Load(StorageKind.Input, IoVariable.FragmentCoord, null, Const(3)));
-                Logger.Warning?.Print(LogClass.Application, $"res is: {res.Value}");
-                Logger.Warning?.Print(LogClass.Application, $"op.Idx is: {op.Idx}");
             }
             else
             {
@@ -156,9 +154,7 @@ namespace Ryujinx.Graphics.Shader.Instructions
 
                     if (context.Config.ImapTypes[index].GetFirstUsedType() == PixelImap.Perspective)
                     {
-                        Logger.Warning?.Print(LogClass.Application, $"res is: {res.Value}");
                         res = context.FPMultiply(res, context.Load(StorageKind.Input, IoVariable.FragmentCoord, null, Const(3)));
-                        Logger.Warning?.Print(LogClass.Application, $"res was changed to: {res.Value}");
                     }
 
                     Logger.Warning?.Print(LogClass.Application, $"op.Imm10 matched is: {op.Imm10}");
@@ -167,10 +163,7 @@ namespace Ryujinx.Graphics.Shader.Instructions
                 {
                     // FragCoord X/Y must be divided by the render target scale, if resolution scaling is active,
                     // because the shader code is not expecting scaled values.
-                    Logger.Warning?.Print(LogClass.Application, $"op.Imm10 matched is: {op.Imm10}");
-                    Logger.Warning?.Print(LogClass.Application, $"res is: {res.Value}");
                     res = context.FPDivide(res, context.Load(StorageKind.ConstantBuffer, SupportBuffer.Binding, Const((int)SupportBufferField.RenderScale), Const(0)));
-                    Logger.Warning?.Print(LogClass.Application, $"res was changed to: {res.Value}");
                 }
                 else if (op.Imm10 == AttributeConsts.FrontFacing && context.Config.GpuAccessor.QueryHostHasFrontFacingBug())
                 {

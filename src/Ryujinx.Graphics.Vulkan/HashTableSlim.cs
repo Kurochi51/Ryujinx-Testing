@@ -90,11 +90,9 @@ namespace Ryujinx.Graphics.Vulkan
         public bool TryGetValue(ref K key, out V value)
         {
             int hashCode = key.GetHashCode();
-            Logger.Warning?.Print(LogClass.Gpu, $"We're getting hashcode: {hashCode} , for key: {key}");
             var bucket = _hashTable[hashCode & TotalBucketsMask];
             if (bucket != null)
             {
-                Logger.Warning?.Print(LogClass.Gpu, $"Bucket wasn't null");
                 for (int i = 0; i < bucket.Length; i++)
                 {
                     ref var entry = ref bucket[i];
