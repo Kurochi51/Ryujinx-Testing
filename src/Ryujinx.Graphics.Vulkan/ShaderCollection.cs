@@ -453,14 +453,17 @@ namespace Ryujinx.Graphics.Vulkan
 
         public bool TryGetGraphicsPipeline(ref PipelineUid key, out Auto<DisposablePipeline> pipeline)
         {
+            Logger.Warning?.Print(LogClass.Gpu, $"Trying to get pipeline with key: {key}");
             if (_graphicsPipelineCache == null)
             {
                 pipeline = default;
+                Logger.Warning?.Print(LogClass.Gpu, $"Pipeline cache was null");
                 return false;
             }
 
             if (!_graphicsPipelineCache.TryGetValue(ref key, out pipeline))
             {
+                Logger.Warning?.Print(LogClass.Gpu, $"We're going down the road of GraphicsPipeline.TryGetValue, wooo");
                 if (_firstBackgroundUse)
                 {
                     Logger.Warning?.Print(LogClass.Gpu, "Background pipeline compile missed on draw - incorrect pipeline state?");
@@ -470,6 +473,7 @@ namespace Ryujinx.Graphics.Vulkan
                 return false;
             }
 
+            Logger.Warning?.Print(LogClass.Gpu, $"All ifs were missed, so we're back here");
             _firstBackgroundUse = false;
 
             return true;
