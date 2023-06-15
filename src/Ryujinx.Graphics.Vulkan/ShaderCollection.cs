@@ -461,7 +461,6 @@ namespace Ryujinx.Graphics.Vulkan
 
             if (!_graphicsPipelineCache.TryGetValue(ref key, out pipeline))
             {
-                Logger.Warning?.Print(LogClass.Gpu, $"We're going down the road of GraphicsPipeline.TryGetValue, with key: {key}");
                 if (_firstBackgroundUse)
                 {
                     Logger.Warning?.Print(LogClass.Gpu, "Background pipeline compile missed on draw - incorrect pipeline state?");
