@@ -137,7 +137,7 @@ jobs:
           
         - name: Pushing Linux builds
           if: matrix.os == 'ubuntu-latest'
-          uses: ncipollo/release-action@v1.12.0
+          uses: ncipollo/release-action@v1.13.0
           with:
             name: ${{ steps.version_info.outputs.build_version }}
             artifacts: "./release_output/*.tar.gz"
@@ -152,7 +152,7 @@ jobs:
             
         - name: Pushing Windows builds
           if: matrix.os == 'windows-latest'
-          uses: ncipollo/release-action@v1.12.0
+          uses: ncipollo/release-action@v1.13.0
           with:
             name: ${{ steps.version_info.outputs.build_version }}
             artifacts: "./release_output/*.zip"
